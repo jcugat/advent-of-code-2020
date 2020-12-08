@@ -1,5 +1,5 @@
 use crate::utils::load_file;
-use std::path::Path;
+use std::{ops::RangeInclusive, path::Path};
 
 pub fn star_one(input: &str) -> i64 {
     let lines: Vec<&str> = input.lines().collect();
@@ -17,13 +17,15 @@ pub fn star_one(input: &str) -> i64 {
         let idx2 = line.find(' ').unwrap();
         let idx3 = line.find(':').unwrap();
 
-        let min_count: usize = line[0..idx1].parse().unwrap();
-        let max_count: usize = line[idx1 + 1..idx2].parse().unwrap();
+        let range = RangeInclusive::new(
+            line[0..idx1].parse().unwrap(),
+            line[idx1 + 1..idx2].parse().unwrap(),
+        );
         let char_to_check: char = line[idx2 + 1..idx2 + 2].parse().unwrap();
         let password = line[idx3 + 2..].to_string();
 
         let occurrences = password.chars().filter(|x| x == &char_to_check).count();
-        if occurrences <= max_count && occurrences >= min_count {
+        if range.contains(&occurrences) {
             valid += 1;
         }
     }
