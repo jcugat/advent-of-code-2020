@@ -38,19 +38,23 @@ fn is_valid_two(line: &str) -> bool {
     let idx2 = line.find(' ').unwrap();
     let idx3 = line.find(':').unwrap();
 
-    let pos1: usize = line[0..idx1].parse().unwrap();
-    let pos2: usize = line[idx1 + 1..idx2].parse().unwrap();
+    let pos1: usize = line[0..idx1].parse::<usize>().unwrap() - 1;
+    let pos2: usize = line[idx1 + 1..idx2].parse::<usize>().unwrap() - 1;
     let char_to_check: char = line[idx2 + 1..idx2 + 2].parse().unwrap();
     let password = line[idx3 + 2..].to_string();
 
-    let mut matches = 0;
-    if password.chars().nth(pos1 - 1).unwrap() == char_to_check {
-        matches += 1
-    }
-    if password.chars().nth(pos2 - 1).unwrap() == char_to_check {
-        matches += 1
-    }
-    matches == 1
+    password
+        .chars()
+        .enumerate()
+        .filter(|(index, letter)| {
+            match (letter == &char_to_check, index == &pos1, index == &pos2) {
+                (true, true, false) => true,
+                (true, false, true) => true,
+                _ => false,
+            }
+        })
+        .count()
+        == 1
 }
 
 pub fn star_one(input: &str) -> usize {
