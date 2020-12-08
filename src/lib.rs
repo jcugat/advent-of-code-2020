@@ -1,24 +1,19 @@
 #![allow(dead_code)]
 mod day01;
+mod utils;
 
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
-    use std::io::Read;
-
-    fn load_file(path: &str) -> String {
-        let mut input = String::new();
-        let mut f = File::open(path).expect("Unable to open file");
-        f.read_to_string(&mut input).expect("Unable to read string");
-
-        input
-    }
+    use stdext::function_name;
 
     #[test]
-    fn solve_day01() {
+    fn day01() {
         use crate::day01::{star_one, star_two};
+        use crate::utils::load_file;
 
-        let input = load_file("day01.txt");
+        let function_name = String::from(function_name!());
+        let file_name = format!("{}_input.txt", &function_name[&function_name.len() - 5..]);
+        let input = load_file(&file_name);
 
         assert_eq!(star_one(&input), 445536);
         assert_eq!(star_two(&input), 138688160);
