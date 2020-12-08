@@ -1,9 +1,9 @@
 pub fn star_one(input: &str) -> i64 {
     let numbers: Vec<i64> = input.lines().map(|x| x.parse::<i64>().unwrap()).collect();
-    for number1 in numbers.clone() {
-        for number2 in numbers.clone() {
-            if number1 + number2 == 2020 {
-                return number1 * number2;
+    for i in 0..numbers.len() {
+        for j in (i + 1)..numbers.len() {
+            if numbers[i] + numbers[j] == 2020 {
+                return numbers[i] * numbers[j];
             }
         }
     }
