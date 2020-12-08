@@ -31,7 +31,38 @@ pub fn star_one(input: &str) -> i64 {
 }
 
 pub fn star_two(input: &str) -> i64 {
-    0
+    let lines: Vec<&str> = input.lines().collect();
+    let mut valid = 0;
+    for line in lines {
+        // Format is:
+        //    N-M C: abcde
+        //     ^ ^ ^
+        //     | | |
+        // idx 1 2 3
+        // N: first position to check
+        // M: second position to check
+        // C: character to check
+        let idx1 = line.find('-').unwrap();
+        let idx2 = line.find(' ').unwrap();
+        let idx3 = line.find(':').unwrap();
+
+        let pos1: usize = line[0..idx1].parse().unwrap();
+        let pos2: usize = line[idx1 + 1..idx2].parse().unwrap();
+        let char_to_check: char = line[idx2 + 1..idx2 + 2].parse().unwrap();
+        let password = line[idx3 + 2..].to_string();
+
+        let mut matches = 0;
+        if password.chars().nth(pos1 - 1).unwrap() == char_to_check {
+            matches += 1
+        }
+        if password.chars().nth(pos2 - 1).unwrap() == char_to_check {
+            matches += 1
+        }
+        if matches == 1 {
+            valid += 1
+        }
+    }
+    valid
 }
 
 #[cfg(test)]
