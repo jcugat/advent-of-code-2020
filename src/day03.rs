@@ -29,7 +29,6 @@ pub fn star_two(input: &str) -> usize {
         (0.5, 2.0), // Had to do a hack here with 0.5
     ];
     for &(step_x, step_y) in slopes.iter() {
-        println!("found {}", walk_forest(input, step_x, step_y));
         result *= walk_forest(input, step_x, step_y);
     }
     result
