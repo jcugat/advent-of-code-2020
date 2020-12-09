@@ -1,19 +1,38 @@
 use crate::utils::load_file;
 use std::path::Path;
 
-pub fn star_one(input: &str) -> usize {
+pub fn walk_forest(input: &str, step_x: f64, step_y: f64) -> usize {
     let forest: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
     forest
         .iter()
         .enumerate()
         .skip(1) // Start position isn't counted
-        .map(|(pos_y, row)| row[(pos_y * 3) % row.len()])
+        .map(|(pos_y, row)| match pos_y % step_y as usize {
+            0 => row[(pos_y as f64 * step_x) as usize % row.len()],
+            _ => '.',
+        })
         .filter(|&place| place == '#')
         .count()
 }
 
-pub fn star_two(_input: &str) -> i64 {
-    0
+pub fn star_one(input: &str) -> usize {
+    walk_forest(input, 3.0, 1.0)
+}
+
+pub fn star_two(input: &str) -> usize {
+    let mut result = 1;
+    let slopes = [
+        (1.0, 1.0),
+        (3.0, 1.0), // This is the slope you already checked
+        (5.0, 1.0),
+        (7.0, 1.0),
+        (0.5, 2.0), // Had to do a hack here with 0.5
+    ];
+    for &(step_x, step_y) in slopes.iter() {
+        println!("found {}", walk_forest(input, step_x, step_y));
+        result *= walk_forest(input, step_x, step_y);
+    }
+    result
 }
 
 #[cfg(test)]
@@ -27,7 +46,7 @@ mod tests {
 
     #[test]
     fn test_star_two() {
-        assert_eq!(star_two(&get_input()), 1)
+        assert_eq!(star_two(&get_input()), 336)
     }
 }
 
