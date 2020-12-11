@@ -1,7 +1,7 @@
 use crate::utils::load_file;
 use std::path::Path;
 
-pub fn boarding_pass_id(input: &str) -> i64 {
+pub fn boarding_pass_id(input: &str) -> usize {
     let mut row_start = 0;
     let mut row_end = 127;
     let mut row_size = (row_end - row_start) + 1;
@@ -32,7 +32,7 @@ pub fn boarding_pass_id(input: &str) -> i64 {
     row_start * 8 + column_start
 }
 
-pub fn star_one(input: &str) -> i64 {
+pub fn star_one(input: &str) -> usize {
     input
         .lines()
         .map(|boarding_pass| boarding_pass_id(boarding_pass))
@@ -40,7 +40,25 @@ pub fn star_one(input: &str) -> i64 {
         .unwrap()
 }
 
-pub fn star_two(input: &str) -> i64 {
+pub fn star_two(input: &str) -> usize {
+    let mut seats = [['·'; 8]; 128];
+    for line in input.lines() {
+        let id = boarding_pass_id(&line);
+        let row = id / 8;
+        let col = id % 8;
+        seats[row][col] = 'X';
+    }
+
+    let mut started = false;
+    for (pos_row, row) in seats.iter().enumerate() {
+        for (pos_col, col) in row.iter().enumerate() {
+            if !started && col == &'X' {
+                started = true;
+            } else if started && col == &'·' {
+                return pos_row * 8 + pos_col;
+            }
+        }
+    }
     0
 }
 
@@ -55,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_star_two() {
-        assert_eq!(star_two(&get_input()), 1)
+        assert_eq!(star_two(&get_input()), 120)
     }
 }
 

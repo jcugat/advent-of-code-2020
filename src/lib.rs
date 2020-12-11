@@ -72,6 +72,6 @@ mod tests {
         let input = load_file(&file_name);
 
         assert_eq!(star_one(&input), 904);
-        assert_eq!(star_two(&input), 0);
+        assert_eq!(star_two(&input), 669);
     }
 }
