@@ -24,6 +24,8 @@ pub fn star_one(input: &str) -> usize {
 }
 
 pub fn star_two(input: &str) -> usize {
+    // How it started
+    /*
     let all_answers: HashSet<char> = HashSet::from_iter('a'..='z');
     let mut groups = vec![all_answers.clone()];
 
@@ -40,6 +42,23 @@ pub fn star_two(input: &str) -> usize {
             .collect();
     }
     groups.iter().map(|group| group.len()).sum()
+    */
+
+    // How it ended
+    let all_answers: HashSet<char> = HashSet::from_iter('a'..='z');
+
+    input
+        .split("\n\n")
+        .map(|group| {
+            group
+                .lines()
+                .map(|line| line.chars().collect::<HashSet<char>>())
+                .fold(all_answers.clone(), |acc, person_answers| {
+                    acc.intersection(&person_answers).cloned().collect()
+                })
+                .len()
+        })
+        .sum()
 }
 
 #[cfg(test)]
