@@ -1,5 +1,5 @@
 use crate::utils::load_file;
-use std::{collections::HashSet, path::Path};
+use std::{collections::HashSet, iter::FromIterator, path::Path};
 
 pub fn star_one(input: &str) -> usize {
     let mut groups: Vec<HashSet<char>> = vec![HashSet::new()];
@@ -14,8 +14,23 @@ pub fn star_one(input: &str) -> usize {
     groups.iter().map(|group| group.len()).sum()
 }
 
-pub fn star_two(input: &str) -> i64 {
-    0
+pub fn star_two(input: &str) -> usize {
+    let all_answers: HashSet<char> = HashSet::from_iter('a'..='z');
+    let mut groups = vec![all_answers.clone()];
+
+    for line in input.lines() {
+        if line.is_empty() {
+            groups.push(all_answers.clone());
+            continue;
+        }
+        *groups.last_mut().unwrap() = groups
+            .last()
+            .unwrap()
+            .intersection(&HashSet::from_iter(line.chars()))
+            .cloned()
+            .collect();
+    }
+    groups.iter().map(|group| group.len()).sum()
 }
 
 #[cfg(test)]
@@ -29,7 +44,7 @@ mod tests {
 
     #[test]
     fn test_star_two() {
-        assert_eq!(star_two(&get_input()), 1)
+        assert_eq!(star_two(&get_input()), 6)
     }
 }
 
