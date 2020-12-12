@@ -123,10 +123,10 @@ fn validate_hgt(value: &str) -> bool {
 }
 
 fn validate_hcl(value: &str) -> bool {
-    if !value.starts_with("#") {
+    if !value.starts_with('#') {
         return false;
     }
-    let hex = value.strip_prefix("#").unwrap();
+    let hex = value.strip_prefix('#').unwrap();
     u32::from_str_radix(hex, 16).is_ok()
 }
 
