@@ -20,7 +20,7 @@ pub fn star_one(input: &str) -> usize {
     let mut passports: Vec<HashSet<&str>> = vec![HashSet::new()];
 
     for line in forest {
-        if line.len() == 0 {
+        if line.is_empty() {
             // New passport break
             passports.push(HashSet::new());
             continue;
@@ -50,7 +50,7 @@ pub fn star_two(input: &str) -> usize {
     let mut passports: Vec<HashSet<&str>> = vec![HashSet::new()];
 
     for line in forest {
-        if line.len() == 0 {
+        if line.is_empty() {
             // New passport break
             passports.push(HashSet::new());
             continue;
