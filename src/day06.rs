@@ -2,6 +2,8 @@ use crate::utils::load_file;
 use std::{collections::HashSet, iter::FromIterator, path::Path};
 
 pub fn star_one(input: &str) -> usize {
+    // How it started
+    /*
     let mut groups: Vec<HashSet<char>> = vec![HashSet::new()];
     for line in input.lines() {
         if line.is_empty() {
@@ -12,6 +14,13 @@ pub fn star_one(input: &str) -> usize {
         }
     }
     groups.iter().map(|group| group.len()).sum()
+    */
+
+    // How it ended
+    input
+        .split("\n\n")
+        .map(|group| HashSet::<char>::from_iter(group.lines().flat_map(|line| line.chars())).len())
+        .sum()
 }
 
 pub fn star_two(input: &str) -> usize {
