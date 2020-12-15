@@ -132,7 +132,7 @@ pub fn star_two(input: &str) -> i64 {
     for instruction_to_fix in 0..program.len() {
         // Try to fix the instruction
         // In case it's not possible, there's no need to run the program
-        if !program.get_mut(instruction_to_fix).unwrap().fix() {
+        if !program[instruction_to_fix].fix() {
             continue;
         }
 
@@ -140,7 +140,7 @@ pub fn star_two(input: &str) -> i64 {
             return accumulator;
         } else {
             // Unfix the instruction since this wasn't the one that was broken
-            program.get_mut(instruction_to_fix).unwrap().fix();
+            program[instruction_to_fix].fix();
         }
     }
     0
