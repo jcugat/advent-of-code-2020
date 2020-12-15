@@ -1,5 +1,5 @@
 use crate::utils::load_file;
-use std::{path::Path, str::FromStr, todo};
+use std::{path::Path, str::FromStr};
 
 enum Operation {
     NOP,
@@ -33,6 +33,7 @@ impl Instruction {
             Operation::JMP => 0,
         }
     }
+
     fn next(&mut self) -> i64 {
         // Returns the next instruction pointer relative to the current one
         self.execd = true;
@@ -40,6 +41,21 @@ impl Instruction {
             Operation::NOP => 1,
             Operation::ACC => 1,
             Operation::JMP => self.param,
+        }
+    }
+
+    fn fix(&mut self) -> bool {
+        // Tries to fix the instruction by swapping between JMP and NOP
+        match self.instr {
+            Operation::NOP => {
+                self.instr = Operation::JMP;
+                true
+            }
+            Operation::JMP => {
+                self.instr = Operation::NOP;
+                true
+            }
+            _ => false,
         }
     }
 }
@@ -58,6 +74,41 @@ impl FromStr for Instruction {
     }
 }
 
+#[derive(Debug, Clone)]
+enum ProgramResult {
+    InfiniteLoop(i64),
+    OutOfBounds(i64),
+}
+
+fn run_program(program: &mut Vec<Instruction>) -> Result<i64, ProgramResult> {
+    let mut instruction_pointer: i64 = 0;
+    let mut accumulator: i64 = 0;
+
+    // Reset the program
+    program.iter_mut().for_each(|instr| instr.execd = false);
+
+    loop {
+        // Got to the end of the program successfully
+        if instruction_pointer == program.len() as i64 {
+            return Ok(accumulator);
+        }
+
+        // Retrieve the current instruction, or fail because we did an invalid jump
+        let current_instruction = match program.get_mut(instruction_pointer as usize) {
+            Some(current_instruction) => current_instruction,
+            None => return Err(ProgramResult::OutOfBounds(accumulator)),
+        };
+
+        // When an instruction has already been executed it means we're in an infinite loop
+        if current_instruction.execd {
+            return Err(ProgramResult::InfiniteLoop(accumulator));
+        }
+
+        accumulator += current_instruction.accum();
+        instruction_pointer += current_instruction.next();
+    }
+}
+
 pub fn star_one(input: &str) -> i64 {
     let mut program: Vec<Instruction> = input
         .lines()
@@ -65,23 +116,33 @@ pub fn star_one(input: &str) -> i64 {
         .map(Result::unwrap)
         .collect();
 
-    let mut instruction_pointer: i64 = 0;
-    let mut accumulator: i64 = 0;
-
-    loop {
-        let current_instruction = program.get_mut(instruction_pointer as usize).unwrap();
-        if current_instruction.execd {
-            break;
-        }
-
-        accumulator += current_instruction.accum();
-        instruction_pointer += current_instruction.next();
+    if let ProgramResult::InfiniteLoop(accumulator) = run_program(&mut program).err().unwrap() {
+        return accumulator;
     }
-
-    accumulator
+    panic!("Solution not found")
 }
 
 pub fn star_two(input: &str) -> i64 {
+    let mut program: Vec<Instruction> = input
+        .lines()
+        .map(str::parse::<Instruction>)
+        .map(Result::unwrap)
+        .collect();
+
+    for instruction_to_fix in 0..program.len() {
+        // Try to fix the instruction
+        // In case it's not possible, there's no need to run the program
+        if !program.get_mut(instruction_to_fix).unwrap().fix() {
+            continue;
+        }
+
+        if let Ok(accumulator) = run_program(&mut program) {
+            return accumulator;
+        } else {
+            // Unfix the instruction since this wasn't the one that was broken
+            program.get_mut(instruction_to_fix).unwrap().fix();
+        }
+    }
     0
 }
 
@@ -96,7 +157,7 @@ mod tests {
 
     #[test]
     fn test_star_two() {
-        assert_eq!(star_two(&get_input()), 1)
+        assert_eq!(star_two(&get_input()), 8)
     }
 }
 
