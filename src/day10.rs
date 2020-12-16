@@ -3,17 +3,19 @@ use itertools::Itertools;
 use std::path::Path;
 
 pub fn star_one(input: &str) -> usize {
-    let diffs = input
+    let nums = input
         .lines()
         .map(str::parse::<u64>)
         .map(Result::unwrap)
         .sorted()
         .tuple_windows()
-        .map(|(x, y)| y - x);
-
-    let num_1s = diffs.clone().filter(|&x| x == 1).count() + 1;
-    let num_3s = diffs.clone().filter(|&x| x == 3).count() + 1;
-    num_1s * num_3s
+        .map(|(x, y)| y - x)
+        .fold((1, 1), |(num_1s, num_3s), x| match x {
+            1 => (num_1s + 1, num_3s),
+            3 => (num_1s, num_3s + 1),
+            _ => (num_1s, num_3s),
+        });
+    nums.0 * nums.1
 }
 
 pub fn star_two(input: &str) -> i64 {
