@@ -7,7 +7,7 @@ pub fn find_xmas(lines: &[u64], range: usize) -> u64 {
         if lines[pos_test - range..pos_test]
             .iter()
             .tuple_combinations()
-            .find(|(&x, &y)| x + y == lines[pos_test])
+            .find(|&(x, y)| x + y == lines[pos_test])
             .is_none()
         {
             return lines[pos_test];
