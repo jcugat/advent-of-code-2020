@@ -2,9 +2,7 @@ use crate::utils::load_file;
 use itertools::Itertools;
 use std::path::Path;
 
-pub fn star_one(input: &str, range: usize) -> u64 {
-    let lines: Vec<u64> = input.lines().map(str::parse).map(Result::unwrap).collect();
-
+pub fn find_xmas(lines: &[u64], range: usize) -> u64 {
     for pos_test in range..lines.len() {
         if lines[pos_test - range..pos_test]
             .iter()
@@ -18,7 +16,22 @@ pub fn star_one(input: &str, range: usize) -> u64 {
     panic!("Could not find solution");
 }
 
-pub fn star_two(input: &str) -> i64 {
+pub fn star_one(input: &str, range: usize) -> u64 {
+    let lines: Vec<u64> = input.lines().map(str::parse).map(Result::unwrap).collect();
+    find_xmas(&lines, range)
+}
+
+pub fn star_two(input: &str, range: usize) -> u64 {
+    let lines: Vec<u64> = input.lines().map(str::parse).map(Result::unwrap).collect();
+    let xmas = find_xmas(&lines, range);
+    for i in 0..lines.len() {
+        for j in i + 2..lines.len() + 1 {
+            if lines[i..j].iter().sum::<u64>() == xmas {
+                // Found the range!
+                return lines[i..j].iter().max().unwrap() + lines[i..j].iter().min().unwrap();
+            }
+        }
+    }
     0
 }
 
@@ -33,7 +46,7 @@ mod tests {
 
     #[test]
     fn test_star_two() {
-        assert_eq!(star_two(&get_input()), 1)
+        assert_eq!(star_two(&get_input(), 5), 62)
     }
 }
 
