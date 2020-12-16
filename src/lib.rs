@@ -7,6 +7,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 mod utils;
 
 #[cfg(test)]
@@ -115,5 +116,18 @@ mod tests {
 
         assert_eq!(star_one(&input), 1614);
         assert_eq!(star_two(&input), 1260);
+    }
+
+    #[test]
+    fn day09() {
+        use crate::day09::{star_one, star_two};
+        use crate::utils::load_file;
+
+        let function_name = String::from(function_name!());
+        let file_name = format!("{}_input.txt", &function_name[&function_name.len() - 5..]);
+        let input = load_file(&file_name);
+
+        assert_eq!(star_one(&input, 25), 248131121);
+        assert_eq!(star_two(&input), 1);
     }
 }
