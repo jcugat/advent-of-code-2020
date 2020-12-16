@@ -24,18 +24,24 @@ pub fn star_one(input: &str, range: usize) -> u64 {
 pub fn star_two(input: &str, range: usize) -> u64 {
     let lines: Vec<u64> = input.lines().map(str::parse).map(Result::unwrap).collect();
     let xmas = find_xmas(&lines, range);
-    for i in 0..lines.len() {
-        for j in i + 2..lines.len() + 1 {
-            match lines[i..j].iter().sum::<u64>().cmp(&xmas) {
-                Ordering::Greater => break,
-                Ordering::Equal => {
-                    return lines[i..j].iter().max().unwrap() + lines[i..j].iter().min().unwrap()
-                }
-                Ordering::Less => (),
+
+    let mut ptr_start = 0;
+    let mut ptr_end = 2;
+
+    loop {
+        match lines[ptr_start..ptr_end].iter().sum::<u64>().cmp(&xmas) {
+            Ordering::Greater => {
+                ptr_start += 1;
+            }
+            Ordering::Equal => {
+                return lines[ptr_start..ptr_end].iter().max().unwrap()
+                    + lines[ptr_start..ptr_end].iter().min().unwrap()
+            }
+            Ordering::Less => {
+                ptr_end += 1;
             }
         }
     }
-    0
 }
 
 #[cfg(test)]
